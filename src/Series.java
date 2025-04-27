@@ -12,24 +12,34 @@ public class Series {
     }
 
     private static class BingeIterator implements EpisodeIterator {
-        private Iterator<Season> seasonIter;
-        private EpisodeIterator episodeIter;
+        private Iterator<Season> seasonIterator;
+        private EpisodeIterator episodeIterator;
 
         public BingeIterator(List<Season> seasons) {
-            seasonIter = seasons.iterator();
-            episodeIter = Collections.emptyIterator();
+            seasonIterator = seasons.iterator();
+            episodeIterator = new EmptyEpisodeIterator();
         }
 
         public boolean hasNext() {
-            while (!episodeIter.hasNext() && seasonIter.hasNext()) {
-                episodeIter = seasonIter.next().iterator();
+            while (!episodeIterator.hasNext() && seasonIterator.hasNext()) {
+                episodeIterator = seasonIterator.next().iterator();
             }
-            return episodeIter.hasNext();
+            return episodeIterator.hasNext();
         }
 
         public Episode next() {
             if (!hasNext()) throw new NoSuchElementException();
-            return episodeIter.next();
+            return episodeIterator.next();
+        }
+    }
+
+    private static class EmptyEpisodeIterator implements EpisodeIterator {
+        public boolean hasNext() {
+            return false;
+        }
+
+        public Episode next() {
+            throw new NoSuchElementException();
         }
     }
 }
