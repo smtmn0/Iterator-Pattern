@@ -8,8 +8,8 @@ public class Season implements Iterable<Episode> {
     }
 
     @Override
-    public EpisodeIterator iterator() {
-        return new SeasonIterator();
+    public Iterator<Episode> iterator() {
+        return new IteratorAdapter(new SeasonIterator());
     }
 
     public EpisodeIterator reverseIterator() {
@@ -20,7 +20,7 @@ public class Season implements Iterable<Episode> {
         return new ShuffleSeasonIterator();
     }
 
-    private class SeasonIterator implements EpisodeIterator {
+    public class SeasonIterator implements EpisodeIterator {
         private int index = 0;
 
         public boolean hasNext() {
@@ -61,4 +61,21 @@ public class Season implements Iterable<Episode> {
             return shuffled.get(index++);
         }
     }
+
+    private static class IteratorAdapter implements Iterator<Episode> {
+        private EpisodeIterator episodeIterator;
+
+        public IteratorAdapter(EpisodeIterator episodeIterator) {
+            this.episodeIterator = episodeIterator;
+        }
+
+        public boolean hasNext() {
+            return episodeIterator.hasNext();
+        }
+
+        public Episode next() {
+            return episodeIterator.next();
+        }
+    }
 }
+
